@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agente Servicios Escolares</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .status {
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .status.activo {
+            color: #2ecc71;
+        }
+
+        .status.detener {
+            color: #e74c3c;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-run {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-run:hover {
+            background: #2980b9;
+        }
+
+        .btn-stop {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            background: #c0392b;
+        }
+
+        ul {
+            margin-top: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🤖 Agente de Servicios Escolares</h1>
+
+    <div id="estado" class="status detener">
+        Estado: detenido
+    </div>
+
+    <button id="btnAgente" class="btn-run" onclick="toggleAgente()">
+        ▶ Ejecutar agente
+    </button>
+
+  
+</div>
+<script>
+    let activo = false;
+    let intervalo = null;
+
+    function actualizarLogs() {
+        fetch("/run")
+            .then(response => response.json())
+            .then(data => {
+                const logs = document.getElementById("logs");
+                logs.innerHTML = "";
+                data.forEach(log => {
+                    const li = document.createElement("li");
+                    li.textContent = log;
+                    logs.appendChild(li);
+                });
+            });
+    }
+
+    function toggleAgente() {
+        const btn = document.getElementById("btnAgente");
+        const estado = document.getElementById("estado");
+
+        if (!activo) {
+            // Ejecutar agente y actualizar cada 10 segundos
+            actualizarLogs();
+            intervalo = setInterval(actualizarLogs, 10000);
+
+            activo = true;
+            btn.textContent = "⏹ Detener agente";
+            btn.className = "btn-stop";
+            estado.textContent = "Estado: activo";
+            estado.className = "status activo";
+        } else {
+            // Detener actualizaciones
+            clearInterval(intervalo);
+            activo = false;
+            btn.textContent = "▶ Ejecutar agente";
+            btn.className = "btn-run";
+            estado.textContent = "Estado: detenido";
+            estado.className = "status detener";
+        }
+    }
+</script>
+</body>
+</html>
