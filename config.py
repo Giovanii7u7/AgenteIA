@@ -1,17 +1,21 @@
 import os
 import google.generativeai as genai
 
-# 🔐 Gmail
-SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
-
-# 🤖 Gemini (configuración por variables de entorno)
+# =====================================================
+# 🤖 GEMINI (Google Generative AI)
+# =====================================================
+# La API Key se define en Vercel como variable de entorno:
+# GEMINI_API_KEY=...
 genai.configure(
     api_key=os.environ.get("GEMINI_API_KEY")
 )
 
-# Exponemos genai para usarlo en ai_responses.py
-client = genai
-# 📅 Fechas oficiales
+# =====================================================
+# 📅 CONFIGURACIÓN GENERAL (opcional / histórica)
+# =====================================================
+# Se conserva por compatibilidad, pero ya no se usa en Vercel
+SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
+
 FECHAS_ESCOLARES = """
 📅 FECHAS IMPORTANTES – SERVICIOS ESCOLARES 2026
 
