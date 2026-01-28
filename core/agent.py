@@ -6,7 +6,7 @@ EN_VERCEL = os.environ.get("VERCEL") == "1"
 
 from core.gmail_auth import obtener_servicio_gmail
 from core.gmail_reader import obtener_headers_y_cuerpo
-from core.gmail_sender import responder_correo
+from core.sendgrid_sender import responder_correo
 from core.utils import (
     es_saludo,
     es_consulta_fechas,
