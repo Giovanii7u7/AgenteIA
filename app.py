@@ -8,9 +8,17 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route("/run")
+
+# ✅ Endpoint llamado por Google Apps Script
+@app.route("/run", methods=["POST"])
 def run_bot():
-    return jsonify(procesar_correos())
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "No data received"}), 400
+
+    return jsonify(procesar_correos(data))
+
 
 @app.route("/config", methods=["GET", "POST"])
 def config_data():
@@ -20,5 +28,3 @@ def config_data():
     data = request.json
     guardar_info(data)
     return jsonify({"status": "ok"})
-
-# ❌ NO app.run() en Vercel
