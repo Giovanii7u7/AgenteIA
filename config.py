@@ -1,11 +1,16 @@
-from google import genai
+import os
+import google.generativeai as genai
 
 # 🔐 Gmail
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
-# 🤖 Gemini
-client = genai.Client(api_key="AIzaSyDTDwIK77ZSpsEFF2Eko5fKJ1WFDkK__54")
+# 🤖 Gemini (configuración por variables de entorno)
+genai.configure(
+    api_key=os.environ.get("GEMINI_API_KEY")
+)
 
+# Exponemos genai para usarlo en ai_responses.py
+client = genai
 # 📅 Fechas oficiales
 FECHAS_ESCOLARES = """
 📅 FECHAS IMPORTANTES – SERVICIOS ESCOLARES 2026
