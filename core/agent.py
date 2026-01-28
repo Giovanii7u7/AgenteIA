@@ -1,3 +1,4 @@
+import config
 from core.sendgrid_sender import responder_correo
 from core.utils import (
     es_saludo,
