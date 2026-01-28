@@ -1,13 +1,15 @@
 import google.generativeai as genai
 from core.data_store import cargar_info
 
+MODEL_NAME = "gemini-2.5-flash"
 
-# =====================================================
-# 🤝 SALUDO
-# =====================================================
+
+def _get_model():
+    return genai.GenerativeModel(MODEL_NAME)
+
+
 def respuesta_saludo(texto):
-    model = genai.GenerativeModel("gemini-pro")
-
+    model = _get_model()
     response = model.generate_content(f"""
 Responde de forma amable, corta y natural.
 El correo recibido es solo un saludo.
@@ -15,81 +17,46 @@ El correo recibido es solo un saludo.
 Correo:
 "{texto}"
 """)
-
     return response.text
 
 
-# =====================================================
-# 📅 FECHAS ESCOLARES
-# =====================================================
 def respuesta_servicios_escolares():
     info = cargar_info()
-    fechas = info.get(
-        "fechas_escolares",
-        "La información de fechas escolares no está disponible actualmente."
-    )
+    fechas = info.get("fechas_escolares", "Información no disponible.")
 
-    model = genai.GenerativeModel("gemini-pro")
-
+    model = _get_model()
     response = model.generate_content(f"""
-Eres el área de Servicios Escolares de una institución educativa.
-Responde de manera formal, clara y amable.
-
-Incluye un saludo breve y presenta la siguiente información oficial:
+Eres el área de Servicios Escolares.
+Responde de manera formal y clara.
 
 {fechas}
 """)
-
     return response.text
 
 
-# =====================================================
-# 💰 COSTOS Y PAGOS
-# =====================================================
 def respuesta_costos_pagos():
     info = cargar_info()
-    costos = info.get(
-        "costos",
-        "La información sobre costos y pagos no está disponible actualmente."
-    )
+    costos = info.get("costos", "Información no disponible.")
 
-    model = genai.GenerativeModel("gemini-pro")
-
+    model = _get_model()
     response = model.generate_content(f"""
-Eres el área de Servicios Escolares de la Universidad del Istmo.
-Responde de manera formal, clara y amable.
-
+Eres el área de Servicios Escolares.
 Indica la siguiente información oficial:
 
 {costos}
-
-Finaliza ofreciendo apoyo en caso de dudas adicionales.
 """)
-
     return response.text
 
 
-# =====================================================
-# 🎓 BECAS
-# =====================================================
 def respuesta_becas():
     info = cargar_info()
-    becas = info.get(
-        "becas",
-        "La información sobre becas no está disponible actualmente."
-    )
+    becas = info.get("becas", "Información no disponible.")
 
-    model = genai.GenerativeModel("gemini-pro")
-
+    model = _get_model()
     response = model.generate_content(f"""
-Eres el área de Servicios Escolares de la Universidad del Istmo.
-Responde de manera formal, clara y amable.
-
-Incluye la siguiente información oficial sobre becas:
+Eres el área de Servicios Escolares.
+Incluye la siguiente información sobre becas:
 
 {becas}
-
-Finaliza invitando a acudir a Servicios Escolares para orientación personalizada.
 """)
-
     return response.text
