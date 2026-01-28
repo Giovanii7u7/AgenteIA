@@ -21,5 +21,4 @@ def config_data():
     guardar_info(data)
     return jsonify({"status": "ok"})
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# ❌ NO app.run() en Vercel
