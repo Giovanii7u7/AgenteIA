@@ -13,24 +13,24 @@ from core.ai_responses import (
     respuesta_becas
 )
 
+EMAIL_PERMITIDO = "giovanni.20032026@outlook.com"
 
 def procesar_correos(data):
-    """
-    data llega desde Google Apps Script con esta forma:
-    {
-      "from": "...",
-      "subject": "...",
-      "body": "..."
-    }
-    """
-
-    remitente = data.get("from", "")
+    remitente = data.get("from", "").lower()
     asunto = data.get("subject", "")
     cuerpo = data.get("body", "")
 
+    # 🔒 FILTRO DE REMITENTE
+    if EMAIL_PERMITIDO not in remitente:
+        return [{
+            "tipo": "Ignorado",
+            "destinatario": remitente,
+            "asunto": asunto,
+            "contenido": "Remitente no autorizado. No se respondió."
+        }]
+
     texto = f"{asunto}\n{cuerpo}"
 
-    # Clasificación
     if es_consulta_fechas(texto):
         respuesta = respuesta_servicios_escolares()
         tipo = "Fechas"
@@ -51,14 +51,13 @@ def procesar_correos(data):
         respuesta = respuesta_saludo(texto)
         tipo = "General"
 
-    # Envío por SendGrid
+    # 📤 Envío por SendGrid (solo si pasó el filtro)
     responder_correo(
         destinatario=remitente,
         asunto="Re: " + asunto,
         contenido=respuesta
     )
 
-    # Log para el frontend
     return [{
         "tipo": tipo,
         "destinatario": remitente,
