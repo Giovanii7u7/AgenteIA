@@ -1,5 +1,8 @@
 import pickle
 import os
+import os
+
+EN_VERCEL = os.environ.get("VERCEL") == "1"
 
 from core.gmail_auth import obtener_servicio_gmail
 from core.gmail_reader import obtener_headers_y_cuerpo
@@ -21,10 +24,20 @@ RESPONDIDOS_FILE = "respondidos.pkl"
 EMAIL_PERMITIDO = "giovanni.20032026@outlook.com"
 
 
+    
+
 def procesar_correos():
     service = obtener_servicio_gmail()
     logs = []
 
+    if EN_VERCEL:
+            return [{
+                "tipo": "Info",
+                "destinatario": "",
+                "asunto": "",
+                "contenido": "Ejecución en Vercel: Gmail deshabilitado temporalmente."
+            }]
+    
     if os.path.exists(RESPONDIDOS_FILE):
         with open(RESPONDIDOS_FILE, 'rb') as f:
             correos_respondidos = pickle.load(f)
