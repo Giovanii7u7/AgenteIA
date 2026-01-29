@@ -1,38 +1,46 @@
 import requests
-from config import client
+from config import OPENROUTER_API_KEY
 from core.data_store import cargar_info
 
-# Puedes cambiar el modelo cuando quieras
-# Opciones seguras y baratas:
-# - mistralai/mistral-7b-instruct
-# - openai/gpt-3.5-turbo
+# 🔹 Modelo recomendado (barato y estable)
+# Otras opciones válidas:
 # - meta-llama/llama-3-8b-instruct
+# - openai/gpt-3.5-turbo
 MODEL_NAME = "mistralai/mistral-7b-instruct"
+
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 
 def _generar_respuesta(prompt: str) -> str:
     """
     Genera una respuesta usando OpenRouter.
-    Maneja errores sin romper la app.
+    Maneja errores sin romper la app (ideal para Vercel).
     """
-    if client is None:
+
+    if not OPENROUTER_API_KEY:
         return "El servicio de IA no está disponible en este momento."
 
     try:
         response = requests.post(
-            f"{client['base_url']}/chat/completions",
+            OPENROUTER_URL,
             headers={
-                "Authorization": f"Bearer {client['api_key']}",
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                 "Content-Type": "application/json",
-                # Header recomendado por OpenRouter
-                "HTTP-Referer": "https://agente-ia.vercel.app",
+                # Recomendado por OpenRouter
+                "HTTP-Referer": "https://agente-ia-iota.vercel.app",
                 "X-Title": "Agente Servicios Escolares"
             },
             json={
                 "model": MODEL_NAME,
                 "messages": [
-                    {"role": "system", "content": "Eres un asistente institucional de Servicios Escolares."},
-                    {"role": "user", "content": prompt}
+                    {
+                        "role": "system",
+                        "content": "Eres un asistente institucional del área de Servicios Escolares."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
                 ],
                 "temperature": 0.3
             },
@@ -42,24 +50,26 @@ def _generar_respuesta(prompt: str) -> str:
         response.raise_for_status()
         data = response.json()
 
-        return data["choices"][0]["message"]["content"]
+        return data["choices"][0]["message"]["content"].strip()
 
     except Exception as e:
         print("❌ Error OpenRouter:", e)
         return "Ocurrió un problema al generar la respuesta. Intente más tarde."
 
 
-def respuesta_saludo(texto):
+# ===================== RESPUESTAS =====================
+
+def respuesta_saludo(texto: str) -> str:
     return _generar_respuesta(f"""
 Responde de forma amable, corta y natural.
-El correo recibido es solo un saludo.
+El correo recibido es únicamente un saludo.
 
 Correo:
 "{texto}"
 """)
 
 
-def respuesta_servicios_escolares():
+def respuesta_servicios_escolares() -> str:
     info = cargar_info()
     fechas = info.get(
         "fechas_escolares",
@@ -75,7 +85,7 @@ Incluye un saludo breve y presenta la siguiente información oficial:
 """)
 
 
-def respuesta_costos_pagos():
+def respuesta_costos_pagos() -> str:
     info = cargar_info()
     costos = info.get(
         "costos",
@@ -93,7 +103,7 @@ Finaliza ofreciendo apoyo en caso de dudas adicionales.
 """)
 
 
-def respuesta_becas():
+def respuesta_becas() -> str:
     info = cargar_info()
     becas = info.get(
         "becas",

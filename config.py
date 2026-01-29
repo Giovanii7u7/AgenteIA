@@ -4,16 +4,8 @@ import os
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 if not OPENROUTER_API_KEY:
-    # ⚠️ No rompemos la app al importar
+    # ⚠️ No rompemos la app al importar (importante en Vercel)
     print("⚠️ OPENROUTER_API_KEY no definida")
-    client = None
-else:
-    # En OpenRouter no se crea un cliente SDK,
-    # solo se guarda la key para usarla vía HTTP (requests)
-    client = {
-        "api_key": OPENROUTER_API_KEY,
-        "base_url": "https://openrouter.ai/api/v1"
-    }
 
 # 📅 Fechas oficiales (valor por defecto)
 FECHAS_ESCOLARES = """
