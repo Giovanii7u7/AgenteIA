@@ -118,7 +118,6 @@
     <ul id="logs"></ul>
 
 </div>
-
 <script>
     let activo = false;
     let intervalo = null;
@@ -128,9 +127,21 @@
         fetch("/run")
             .then(r => r.json())
             .then(data => {
+
+                // 🔎 LOG GENERAL
+                console.log("📨 Respuesta cruda de /run:", data);
+
                 const logs = document.getElementById("logs");
 
                 data.forEach(item => {
+
+                    // 🔎 LOG POR CORREO
+                    console.log("✉️ Correo procesado:");
+                    console.log("Tipo:", item.tipo);
+                    console.log("Para:", item.destinatario);
+                    console.log("Asunto:", item.asunto);
+                    console.log("Contenido:", item.contenido);
+
                     const key = item.destinatario + item.asunto;
                     if (mostrados.has(key)) return;
                     mostrados.add(key);
@@ -156,6 +167,9 @@
 
                     logs.prepend(li);
                 });
+            })
+            .catch(err => {
+                console.error("❌ Error llamando a /run:", err);
             });
     }
 
@@ -205,6 +219,7 @@
 
     cargarConfig();
 </script>
+
 
 </body>
 </html>
