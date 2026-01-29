@@ -1,13 +1,19 @@
 import os
-from google import genai
 
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+# 🤖 OpenRouter (serverless-safe)
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
-if not GOOGLE_API_KEY:
-    print("⚠️ GOOGLE_API_KEY no definida")
+if not OPENROUTER_API_KEY:
+    # ⚠️ No rompemos la app al importar
+    print("⚠️ OPENROUTER_API_KEY no definida")
     client = None
 else:
-    client = genai.Client(api_key=GOOGLE_API_KEY)
+    # En OpenRouter no se crea un cliente SDK,
+    # solo se guarda la key para usarla vía HTTP (requests)
+    client = {
+        "api_key": OPENROUTER_API_KEY,
+        "base_url": "https://openrouter.ai/api/v1"
+    }
 
 # 📅 Fechas oficiales (valor por defecto)
 FECHAS_ESCOLARES = """
