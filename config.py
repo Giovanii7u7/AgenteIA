@@ -1,11 +1,13 @@
 import os
+from google import genai
 
-# 🤖 OpenRouter (serverless-safe)
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
-if not OPENROUTER_API_KEY:
-    # ⚠️ No rompemos la app al importar (importante en Vercel)
-    print("⚠️ OPENROUTER_API_KEY no definida")
+if not GOOGLE_API_KEY:
+    print("⚠️ GOOGLE_API_KEY no definida")
+    client = None
+else:
+    client = genai.Client(api_key=GOOGLE_API_KEY)
 
 # 📅 Fechas oficiales (valor por defecto)
 FECHAS_ESCOLARES = """
