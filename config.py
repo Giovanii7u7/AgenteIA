@@ -1,21 +1,13 @@
 import os
 from google import genai
 
-# 🔐 Gmail
-SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
-# 🤖 Gemini (Vercel-safe)
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-print("DEBUG GEMINI_API_KEY:", GEMINI_API_KEY)
-
-if not GEMINI_API_KEY:
-    # ⚠️ No crasheamos la app completa en import
-    print("⚠️ GEMINI_API_KEY no definida (entorno actual)")
+if not GOOGLE_API_KEY:
+    print("⚠️ GOOGLE_API_KEY no definida")
     client = None
 else:
-    client = genai.Client(api_key=GEMINI_API_KEY)
-
-
+    client = genai.Client(api_key=GOOGLE_API_KEY)
 
 # 📅 Fechas oficiales (valor por defecto)
 FECHAS_ESCOLARES = """
