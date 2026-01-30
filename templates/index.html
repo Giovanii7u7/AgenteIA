@@ -1,225 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Agente Servicios Escolares</title>
-
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f4f6f8;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
-        h1, h2 {
-            color: #333;
-        }
-
-        .status {
-            margin: 15px 0;
-            font-weight: bold;
-        }
-
-        .status.activo { color: #2ecc71; }
-        .status.detener { color: #e74c3c; }
-
-        button {
-            padding: 12px 25px;
-            font-size: 15px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .btn-run { background: #3498db; color: white; }
-        .btn-stop { background: #e74c3c; color: white; }
-
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-family: inherit;
-            margin-bottom: 10px;
-        }
-
-        ul {
-            margin-top: 25px;
-            padding: 0;
-            list-style: none;
-        }
-
-        li {
-            margin-bottom: 12px;
-            padding: 12px;
-            border-radius: 8px;
-            background: #f7f7f7;
-            cursor: pointer;
-        }
-
-        .detalle {
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            background: #fff;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-        }
-
-        pre {
-            white-space: pre-wrap;
-            margin: 0;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Panel Servicios Escolares</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-<div class="container">
+<h1>Servicios Escolares</h1>
 
-    <h1>🤖 Agente de Servicios Escolares</h1>
+<label>Fechas escolares</label>
+<textarea id="fechas"></textarea>
 
-    <div id="estado" class="status detener">
-        Estado: detenido
-    </div>
+<label>Costos</label>
+<textarea id="costos"></textarea>
 
-    <button id="btnAgente" class="btn-run" onclick="toggleAgente()">
-        ▶ Ejecutar agente
-    </button>
+<label>Becas</label>
+<textarea id="becas"></textarea>
 
-    <!-- ================= CONFIGURACIÓN EDITABLE ================= -->
+<button onclick="guardar()">Guardar cambios</button>
 
-    <h2>⚙️ Configuración editable</h2>
-
-    <label><strong>📅 Fechas escolares</strong></label>
-    <textarea id="fechas" rows="8"></textarea>
-
-    <label><strong>💰 Costos y pagos</strong></label>
-    <textarea id="costos" rows="4"></textarea>
-
-    <label><strong>🎓 Becas</strong></label>
-    <textarea id="becas" rows="6"></textarea>
-
-    <button onclick="guardarConfig()">💾 Guardar cambios</button>
-
-    <!-- ================= LOGS ================= -->
-
-    <h2>📨 Correos enviados</h2>
-    <ul id="logs"></ul>
-
-</div>
-<script>
-    let activo = false;
-    let intervalo = null;
-    const mostrados = new Set();
-
-    function actualizarLogs() {
-        fetch("/run")
-            .then(r => r.json())
-            .then(data => {
-
-                // 🔎 LOG GENERAL
-                console.log("📨 Respuesta cruda de /run:", data);
-
-                const logs = document.getElementById("logs");
-
-                data.forEach(item => {
-
-                    // 🔎 LOG POR CORREO
-                    console.log("✉️ Correo procesado:");
-                    console.log("Tipo:", item.tipo);
-                    console.log("Para:", item.destinatario);
-                    console.log("Asunto:", item.asunto);
-                    console.log("Contenido:", item.contenido);
-
-                    const key = item.destinatario + item.asunto;
-                    if (mostrados.has(key)) return;
-                    mostrados.add(key);
-
-                    const li = document.createElement("li");
-                    const id = "detalle-" + mostrados.size;
-
-                    li.innerHTML = `
-                        📤 <strong>Correo enviado (${item.tipo})</strong><br>
-                        <small>Para: ${item.destinatario}</small>
-
-                        <div id="${id}" class="detalle">
-                            <strong>Asunto:</strong> ${item.asunto}<br><br>
-                            <strong>Contenido:</strong><br>
-                            <pre>${item.contenido}</pre>
-                        </div>
-                    `;
-
-                    li.onclick = () => {
-                        const d = document.getElementById(id);
-                        d.style.display = d.style.display === "block" ? "none" : "block";
-                    };
-
-                    logs.prepend(li);
-                });
-            })
-            .catch(err => {
-                console.error("❌ Error llamando a /run:", err);
-            });
-    }
-
-    function toggleAgente() {
-        const btn = document.getElementById("btnAgente");
-        const estado = document.getElementById("estado");
-
-        if (!activo) {
-            actualizarLogs();
-            intervalo = setInterval(actualizarLogs, 10000);
-            activo = true;
-            btn.textContent = "⏹ Detener agente";
-            btn.className = "btn-stop";
-            estado.textContent = "Estado: activo";
-            estado.className = "status activo";
-        } else {
-            clearInterval(intervalo);
-            activo = false;
-            btn.textContent = "▶ Ejecutar agente";
-            btn.className = "btn-run";
-            estado.textContent = "Estado: detenido";
-            estado.className = "status detener";
-        }
-    }
-
-    function cargarConfig() {
-        fetch("/config")
-            .then(r => r.json())
-            .then(data => {
-                fechas.value = data.fechas_escolares || "";
-                costos.value = data.costos || "";
-                becas.value = data.becas || "";
-            });
-    }
-
-    function guardarConfig() {
-        fetch("/config", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                fechas_escolares: fechas.value,
-                costos: costos.value,
-                becas: becas.value
-            })
-        }).then(() => alert("Configuración guardada"));
-    }
-
-    cargarConfig();
-</script>
-
-
+<script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,27 @@
+const API = "https://backendiacorreo-production.up.railway.app";
+
+function cargar() {
+  fetch(`${API}/admin/info`)
+    .then(r => r.json())
+    .then(data => {
+      fechas.value = data.fechas_escolares || "";
+      costos.value = data.costos || "";
+      becas.value = data.becas || "";
+    });
+}
+
+function guardar() {
+  fetch(`${API}/admin/info`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      fechas_escolares: fechas.value,
+      costos: costos.value,
+      becas: becas.value
+    })
+  }).then(() => alert("Guardado correctamente"));
+}
+
+cargar();

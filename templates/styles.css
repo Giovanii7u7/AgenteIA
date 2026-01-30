@@ -1,0 +1,76 @@
+/* Reset básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Estilo general */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f4f6f8;
+  color: #333;
+  padding: 40px;
+}
+
+/* Contenedor principal */
+h1 {
+  margin-bottom: 25px;
+  color: #2c3e50;
+}
+
+/* Etiquetas */
+label {
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 6px;
+  font-weight: bold;
+  color: #34495e;
+}
+
+/* Textareas */
+textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  background-color: #fff;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+/* Botón */
+button {
+  margin-top: 25px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #3498db;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+/* Responsive simple */
+@media (max-width: 600px) {
+  body {
+    padding: 20px;
+  }
+
+  textarea {
+    min-height: 100px;
+  }
+}
